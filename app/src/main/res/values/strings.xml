@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GDict</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_share">Share</string>
+    <string name="search_hint">Search</string>
+    <string name="search_string">Define</string>
+    <string name="desc">Description</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_credits">Credits</string>
+
+</resources>
