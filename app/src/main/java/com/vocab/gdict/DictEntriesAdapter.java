@@ -121,6 +121,7 @@ public class DictEntriesAdapter extends BaseAdapter {
                 //MediaController mC = new MediaController(mContext);
                 //mC.setMediaPlayer(mContext);
                 return itemLayout;
+
             case DictEntry.FOS:
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.verb_noun_view, null);
                 fos = (TextView) itemLayout.findViewById(R.id.verb_noun);
@@ -135,6 +136,7 @@ public class DictEntriesAdapter extends BaseAdapter {
                 fos.setText(anItem.getFosFull());
                 word.setText(anItem.getFosDesc());
                 return itemLayout;
+
             case DictEntry.ONLY_MEAN:
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.mean, null);
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
@@ -142,29 +144,9 @@ public class DictEntriesAdapter extends BaseAdapter {
 //                addB = (Button) itemLayout.findViewById(R.id.add_button);
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
-//                addB.setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        String lWord = anItem.getWord();
-//                        String lDef = anItem.getMeaning();
-//                        String lFos = anItem.getFosBrief();
-//                        Intent sendToUnivVoc = new Intent("universalvocabulary.intent.action.ADD");
-//                        sendToUnivVoc.setType("text/plain");
-//                        sendToUnivVoc.putExtra("lWord", lWord);
-//                        sendToUnivVoc.putExtra("lDef", lDef);
-//                        sendToUnivVoc.putExtra("lSentence", "");
-//                        sendToUnivVoc.putExtra("lPOS", lFos);
-//                        try {
-//                            mContext.startActivity(sendToUnivVoc);
-//                        } catch (ActivityNotFoundException activityNotFound) {
-//                            Toast.makeText(mContext, "Please install \"Word Note\" app to save and learn words", Toast.LENGTH_LONG).show();
-//                            Intent openPlay = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vocab.universalvocabulary"));
-//                            mContext.startActivity(openPlay);
-//                        }
-//                    }
-//                });
 
                 return itemLayout;
+
             case DictEntry.MEAN_SYN:
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.mean_syn, null);
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
@@ -174,28 +156,9 @@ public class DictEntriesAdapter extends BaseAdapter {
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
                 syn.setText(anItem.getSynonyms());
-//                addB.setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        String lWord = anItem.getWord();
-//                        String lDef = anItem.getMeaning() + " " + anItem.getSynonyms().substring(9);
-//                        String lFos = anItem.getFosBrief();
-//                        Intent sendToUnivVoc = new Intent("universalvocabulary.intent.action.ADD");
-//                        sendToUnivVoc.setType("text/plain");
-//                        sendToUnivVoc.putExtra("lWord", lWord);
-//                        sendToUnivVoc.putExtra("lDef", lDef);
-//                        sendToUnivVoc.putExtra("lSentence", "");
-//                        sendToUnivVoc.putExtra("lPOS", lFos);
-//                        try {
-//                            mContext.startActivity(sendToUnivVoc);
-//                        } catch (ActivityNotFoundException activityNotFound) {
-//                            Toast.makeText(mContext, "Please install \"Word Note\" app to save and learn words", Toast.LENGTH_LONG).show();
-//                            Intent openPlay = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vocab.universalvocabulary"));
-//                            mContext.startActivity(openPlay);
-//                        }
-//                    }
-//                });
+
                 return itemLayout;
+
             case DictEntry.MEAN_SYN_ANT:
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.mean_syn_ant, null);
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
@@ -207,28 +170,9 @@ public class DictEntriesAdapter extends BaseAdapter {
                 fos.setText(anItem.getFosBrief());
                 syn.setText(anItem.getSynonyms());
                 ant.setText(anItem.getAntonyms());
-//                addB.setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        String lWord = anItem.getWord();
-//                        String lDef = anItem.getMeaning() + " " + anItem.getSynonyms().substring(9);
-//                        String lFos = anItem.getFosBrief();
-//                        Intent sendToUnivVoc = new Intent("universalvocabulary.intent.action.ADD");
-//                        sendToUnivVoc.setType("text/plain");
-//                        sendToUnivVoc.putExtra("lWord", lWord);
-//                        sendToUnivVoc.putExtra("lDef", lDef);
-//                        sendToUnivVoc.putExtra("lSentence", "");
-//                        sendToUnivVoc.putExtra("lPOS", lFos);
-//                        try {
-//                            mContext.startActivity(sendToUnivVoc);
-//                        } catch (ActivityNotFoundException activityNotFound) {
-//                            Toast.makeText(mContext, "Please install \"Word Note\" app to save and learn words", Toast.LENGTH_LONG).show();
-//                            Intent openPlay = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vocab.universalvocabulary"));
-//                            mContext.startActivity(openPlay);
-//                        }
-//                    }
-//                });
+
                 return itemLayout;
+
             case DictEntry.MEAN_SENT:
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.mean_sent, null);
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
@@ -238,29 +182,9 @@ public class DictEntriesAdapter extends BaseAdapter {
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
                 sent.setText(anItem.getSentence());
-//                addB.setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        String lWord = anItem.getWord();
-//                        String lDef = anItem.getMeaning();
-//                        String lSentence = anItem.getSentence();
-//                        String lFos = anItem.getFosBrief();
-//                        Intent sendToUnivVoc = new Intent("universalvocabulary.intent.action.ADD");
-//                        sendToUnivVoc.setType("text/plain");
-//                        sendToUnivVoc.putExtra("lWord", lWord);
-//                        sendToUnivVoc.putExtra("lDef", lDef);
-//                        sendToUnivVoc.putExtra("lSentence", lSentence.substring(1, lSentence.length() - 1));
-//                        sendToUnivVoc.putExtra("lPOS", lFos);
-//                        try {
-//                            mContext.startActivity(sendToUnivVoc);
-//                        } catch (ActivityNotFoundException activityNotFound) {
-//                            Toast.makeText(mContext, "Please install \"Word Note\" app to save and learn words", Toast.LENGTH_LONG).show();
-//                            Intent openPlay = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vocab.universalvocabulary"));
-//                            mContext.startActivity(openPlay);
-//                        }
-//                    }
-//                });
+
                 return itemLayout;
+
             case DictEntry.MEAN_SENT_SYN:
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.mean_sent_syn, null);
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
@@ -272,29 +196,9 @@ public class DictEntriesAdapter extends BaseAdapter {
                 fos.setText(anItem.getFosBrief());
                 syn.setText(anItem.getSynonyms());
                 sent.setText(anItem.getSentence());
-//                addB.setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        String lWord = anItem.getWord();
-//                        String lDef = anItem.getMeaning() + " " + anItem.getSynonyms().substring(9);
-//                        String lSentence = anItem.getSentence();
-//                        String lFos = anItem.getFosBrief();
-//                        Intent sendToUnivVoc = new Intent("universalvocabulary.intent.action.ADD");
-//                        sendToUnivVoc.setType("text/plain");
-//                        sendToUnivVoc.putExtra("lWord", lWord);
-//                        sendToUnivVoc.putExtra("lDef", lDef);
-//                        sendToUnivVoc.putExtra("lSentence", lSentence.substring(1, lSentence.length() - 1));
-//                        sendToUnivVoc.putExtra("lPOS", lFos);
-//                        try {
-//                            mContext.startActivity(sendToUnivVoc);
-//                        } catch (ActivityNotFoundException activityNotFound) {
-//                            Toast.makeText(mContext, "Please install \"Word Note\" app to save and learn words", Toast.LENGTH_LONG).show();
-//                            Intent openPlay = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vocab.universalvocabulary"));
-//                            mContext.startActivity(openPlay);
-//                        }
-//                    }
-//                });
+
                 return itemLayout;
+
             case DictEntry.MEAN_SENT_SYN_ANT:
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.mean_sent_syn_ant, null);
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
@@ -308,28 +212,7 @@ public class DictEntriesAdapter extends BaseAdapter {
                 syn.setText(anItem.getSynonyms());
                 sent.setText(anItem.getSentence());
                 ant.setText(anItem.getAntonyms());
-//                addB.setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        String lWord = anItem.getWord();
-//                        String lDef = anItem.getMeaning() + " " + anItem.getSynonyms().substring(9);
-//                        String lSentence = anItem.getSentence();
-//                        String lFos = anItem.getFosBrief();
-//                        Intent sendToUnivVoc = new Intent("universalvocabulary.intent.action.ADD");
-//                        sendToUnivVoc.setType("text/plain");
-//                        sendToUnivVoc.putExtra("lWord", lWord);
-//                        sendToUnivVoc.putExtra("lDef", lDef);
-//                        sendToUnivVoc.putExtra("lSentence", lSentence.substring(1, lSentence.length() - 1));
-//                        sendToUnivVoc.putExtra("lPOS", lFos);
-//                        try {
-//                            mContext.startActivity(sendToUnivVoc);
-//                        } catch (ActivityNotFoundException activityNotFound) {
-//                            Toast.makeText(mContext, "Please install \"Word Note\" app to save and learn words", Toast.LENGTH_LONG).show();
-//                            Intent openPlay = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.vocab.universalvocabulary"));
-//                            mContext.startActivity(openPlay);
-//                        }
-//                    }
-//                });
+
 			/*((ListActivity) mContext).runOnUiThread(new Runnable() {
 			     @Override
 			     public void run() {
@@ -341,6 +224,7 @@ public class DictEntriesAdapter extends BaseAdapter {
 			    }
 			});*/
                 return itemLayout;
+
             case DictEntry.ENCYCLOPEDIA:
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.encyclopedia, null);
                 word = (TextView) itemLayout.findViewById(R.id.search_title);
@@ -350,6 +234,7 @@ public class DictEntriesAdapter extends BaseAdapter {
                 mean.setText(anItem.getMeaning());
                 sent.setText(anItem.getSentence());
                 return itemLayout;
+
             default:
                 return null;
         }
