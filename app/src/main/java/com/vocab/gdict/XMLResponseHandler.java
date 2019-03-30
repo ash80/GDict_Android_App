@@ -337,15 +337,18 @@ class XMLResponseHandler {
         int i = 1;
         //String pronunciation="";
         while (!(eventType == XmlPullParser.START_TAG && hasAttr(spanTag, "class", speaker))) {
+            eventType = xpp.next();
             if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase(divTag))
                 i--;
+            if (eventType == XmlPullParser.START_TAG && xpp.getName().equalsIgnoreCase(divTag))
+                i++;
             //TODO: Get Pronunciation
 			/*if(eventType==XmlPullParser.START_TAG && xpp.getName().equals(spanTag) && !hasAttr(spanTag,"class",phonetic)) {
 				eventType = xpp.next();
 				if(eventType==XmlPullParser.TEXT)
 					pronunciation = xpp.getText();
 			}*/
-            eventType = xpp.next();
+
             if (i == 0)
                 break;
         }
@@ -364,8 +367,17 @@ class XMLResponseHandler {
             }
 
             return audioTemp; //exits at the end of matching divtag of
-        } else
+        } else {
+            eventType = xpp.next();
+            while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag) && i < 1)) {
+                eventType = xpp.next();
+                if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag))
+                    i++;
+                if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
+                    i--;
+            }
             return null;
+        }
 
     }
 
