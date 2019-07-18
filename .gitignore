@@ -4,6 +4,6 @@ lib/
 *.egg-info/
 dist/
 build/
-gradle/
-reverse_proxy_server/
-custom_kernel/
+*gradle/
+.gradle/
+local.properties

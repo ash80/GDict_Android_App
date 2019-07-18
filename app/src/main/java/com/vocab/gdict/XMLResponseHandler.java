@@ -134,7 +134,8 @@ class XMLResponseHandler {
 					    }
 					});*/
                     runDictNotFound();
-                } else {
+                }
+                else {
                     String sT = "", bD = "", smry = "";
 
                     if (!onlySummary) {
@@ -153,21 +154,10 @@ class XMLResponseHandler {
                             eventType = xpp.next();
                         bD = xpp.getText();
                         eventType = xpp.next();
-						/*while(!(eventType==XmlPullParser.START_TAG && hasAttr(divTag,"class",summary))) {
-							eventType = xpp.next();
-							if((eventType == XmlPullParser.END_TAG && xpp.getName().equals(olTag)
-									|| eventType==XmlPullParser.END_DOCUMENT))
-								i--;
-							if(i==0)
-								break;
-							else
-								continue;
-						}*/
                         while (!((eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", summary)) ||
                                 eventType == XmlPullParser.END_DOCUMENT)) {
                             eventType = xpp.next();
                         }
-                        //if(i!=0) {
                         if (eventType != XmlPullParser.END_DOCUMENT) {
                             while (eventType != XmlPullParser.TEXT)
                                 eventType = xpp.next();
@@ -200,7 +190,8 @@ class XMLResponseHandler {
                         }
                     });
                 }
-            } else {
+            }
+            else {
                 final String word = getWord();
                 eventType = xpp.next(); //enter empty divTag
                 eventType = xpp.next(); //enter divTag with lr_dct_ent_ph or another empty <div>
@@ -228,7 +219,8 @@ class XMLResponseHandler {
                         }
                         eventType = xpp.next();
                     }
-                } else
+                }
+                else
                     audio = "";
                 ((ListActivity) ctx).runOnUiThread(new Runnable() {
                     @Override
@@ -236,63 +228,46 @@ class XMLResponseHandler {
                         mAdapter.add(new DictEntry(DictEntry.THE_WORD, word, audio));
                     }
                 });
-
-                int i;
-                if (eventType == XmlPullParser.END_TAG)
-                    i = 1;
-                else
-                    i = 2;
-                while (!(eventType == XmlPullParser.END_DOCUMENT || (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", startOrigin)))) {
+                while (!(eventType == XmlPullParser.END_DOCUMENT || (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", dctEnter)))) {
                     eventType = xpp.next();
-                    if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag))
-                        i++;
-                    if (i == 0)
-                        break;
-                    else {
-                        if (!phV && (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", figSpeech))) {
-                            fos = getFos();
-                            i = 3; //resetting i to 2
-                            j = true; //fos ready
-                            System.out.println(fos);
-                            //eventType = xpp.next();
-                        }
-                        if (!phV && eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", fsDesc) || hasAttr(divTag, "class", sentence))) {
-                            fosDesc = getFosDesc();
-
-                            k = true; //fosDesc ready
-                            System.out.println(fosDesc);
-
-                            //seventType = xpp.next();
-                        }
-
-                        if (j && k) {
-                            final String fos1 = fos;
-                            final String fosDesc1 = fosDesc;
-                            ((ListActivity) ctx).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mAdapter.add(new DictEntry(fos1, fosDesc1));
-                                }
-                            });
-                            j = false;
-                            k = false;
-                        }
-
-                        if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", sen)) {
-                            i += 2;
-                            printRests(word, fos);
-                        }
-                        if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", subsen)) {
-                            printRests(word, fos);
-                        }
+                    if (!phV && (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", figSpeech))) {
+                        fos = getFos();
+                        j = true; //fos ready
+                        System.out.println(fos);
+                        //eventType = xpp.next();
                     }
-                    if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
-                        i--;
+                    if (!phV && eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", fsDesc) || hasAttr(divTag, "class", sentence))) {
+                        fosDesc = getFosDesc();
 
+                        k = true; //fosDesc ready
+                        System.out.println(fosDesc);
+
+                        //seventType = xpp.next();
+                    }
+
+                    if (j && k) {
+                        final String fos1 = fos;
+                        final String fosDesc1 = fosDesc;
+                        ((ListActivity) ctx).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.add(new DictEntry(fos1, fosDesc1));
+                            }
+                        });
+                        j = false;
+                        k = false;
+                    }
+
+                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", sen)) {
+                        printRests(word, fos);
+                    }
+                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", subsen)) {
+                        printRests(word, fos);
+                    }
                 }
                 // TODO: Code for additional dictionary
                 int nextIdx = idx;
-                eventType = xpp.next();
+//                eventType = xpp.next();
                 while (eventType != XmlPullParser.END_DOCUMENT) {
                     if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", dctEnter)) {
                         nextIdx++;
@@ -336,49 +311,17 @@ class XMLResponseHandler {
     private String getAudioLink() throws XmlPullParserException, IOException {
         int i = 1;
         //String pronunciation="";
-        while (!(eventType == XmlPullParser.START_TAG && hasAttr(spanTag, "class", speaker))) {
-            eventType = xpp.next();
-            if (eventType == XmlPullParser.END_TAG && xpp.getName().equalsIgnoreCase(divTag))
-                i--;
-            if (eventType == XmlPullParser.START_TAG && xpp.getName().equalsIgnoreCase(divTag))
-                i++;
-            //TODO: Get Pronunciation
-			/*if(eventType==XmlPullParser.START_TAG && xpp.getName().equals(spanTag) && !hasAttr(spanTag,"class",phonetic)) {
-				eventType = xpp.next();
-				if(eventType==XmlPullParser.TEXT)
-					pronunciation = xpp.getText();
-			}*/
 
+        while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))) {
+            eventType = xpp.next();
+            if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag))
+                i++;
+            if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
+                i--;
             if (i == 0)
                 break;
         }
-        if (i != 0) {
-            while (!(eventType == XmlPullParser.START_TAG && xpp.getName().equals("audio"))) {
-                eventType = xpp.next();
-            }
-            //TODO: Get audio
-            String audioTemp = "http:" + xpp.getAttributeValue(null, "src");
-            while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag) && i < 1)) {
-                eventType = xpp.next();
-                if(eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag))
-                    i++;
-                if(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
-                    i--;
-            }
-
-            return audioTemp; //exits at the end of matching divtag of
-        } else {
-            eventType = xpp.next();
-            while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag) && i < 1)) {
-                eventType = xpp.next();
-                if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag))
-                    i++;
-                if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
-                    i--;
-            }
-            return null;
-        }
-
+        return null;
     }
 
     private String getFos() throws XmlPullParserException, IOException {

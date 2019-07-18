@@ -32,7 +32,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.Bitmap;
+//import android.graphics.Bitmap;
 
 
 public class MainActivity extends ListActivity implements OnInitListener {
