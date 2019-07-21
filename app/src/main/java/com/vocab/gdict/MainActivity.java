@@ -10,10 +10,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -26,10 +30,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 //import android.graphics.Bitmap;
@@ -41,7 +48,7 @@ public class MainActivity extends ListActivity implements OnInitListener {
     WebView webV;
     ListView lView;
     ProgressBar loadingBar;
-    String xmlText;
+//    String xmlText;
     String searchQ;
     DictEntriesAdapter mAdapter;
     int openCounter;
@@ -50,17 +57,40 @@ public class MainActivity extends ListActivity implements OnInitListener {
     // int pageFinishCtr=0;
     boolean isRedirected;
     private TextToSpeech myTTS;
+    boolean IsFirstTime;
+    int activeTable;
+    private SQLiteDatabase mDB = null;
+    private DatabaseOpenHelper mDbHelper;
+    private SimpleCursorAdapter mCursonAdapter;
+    private SharedPreferences prefs;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        prefs = getSharedPreferences("Customizes",MODE_PRIVATE);
+        IsFirstTime = prefs.getBoolean("IsFirstTime", true);
+        mDbHelper = new DatabaseOpenHelper(this);
+        if(IsFirstTime) {
+            try {
+                mDbHelper.createDataBase();
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("Status_0", "Saved Words");
+                editor.putInt("currentNumberOfTables", 1);
+                editor.putInt("currentlyActiveTable", 0);
+                editor.putBoolean("resetListStatus_0", true);
+                editor.putBoolean("IsFirstTime", false);
+                editor.commit();
+            } catch (IOException ioe) {
+                throw new Error("Unable to create database");
+            }
+        }
+        activeTable = prefs.getInt("currentlyActiveTable", 0);
         isRedirected = false;
         searchQ = getIntent().getStringExtra("EXTRA_QUERY");
         if (searchQ != null) {
             setTheme(android.R.style.Theme_Holo_Dialog_NoActionBar_MinWidth);
         } else {
-            final SharedPreferences prefs = getSharedPreferences("Customizes", MODE_PRIVATE);
             openCounter = prefs.getInt("openCounter", 0);
             openCounter++;
             if (openCounter == 15) {
@@ -97,15 +127,53 @@ public class MainActivity extends ListActivity implements OnInitListener {
         searchBox = (EditText) findViewById(R.id.word_search);
         clearB = (Button) findViewById(R.id.clear_button);
         searchB = (Button) findViewById(R.id.search_button);
-        //lView = (ListView) findViewById(R.id.list_items);
+        mDB = mDbHelper.getWritableDatabase();
+        Cursor localWordsCursor = readLocalWords(null);
+        mCursonAdapter = new SimpleCursorAdapter(this, R.layout.mean_sent_syn_ant_local,
+                localWordsCursor,
+                new String[] { DatabaseOpenHelper.columns[1], DatabaseOpenHelper.columns[2],
+                               DatabaseOpenHelper.columns[3], DatabaseOpenHelper.columns[4],
+                               DatabaseOpenHelper.columns[5] },
+                new int[] { R.id.local_word, R.id.local_pos, R.id.local_meaning,
+                R.id.local_sentence, R.id.local_synonyms },
+                0);
+        lView = (ListView) findViewById(R.id.second_list_view);
+
         webV = (WebView) findViewById(R.id.webView1);
         loadingBar = (ProgressBar) findViewById(R.id.loading_bar);
         loadingBar.setVisibility(View.INVISIBLE);
         webV.setVisibility(View.INVISIBLE);
         webV.getSettings().setJavaScriptEnabled(true);
         //CookieManager.getInstance().setAcceptCookie(true);
-        mAdapter = new DictEntriesAdapter(this, myTTS);
-        getListView().setAdapter(mAdapter);
+        mAdapter = new DictEntriesAdapter(this, myTTS, prefs.getInt("currentlyActiveTable", 0));
+        lView.setAdapter(mAdapter);
+        lView.setVisibility(View.INVISIBLE);
+        getListView().setAdapter(mCursonAdapter);
+        mCursonAdapter.setFilterQueryProvider(new FilterQueryProvider() {
+            public Cursor runQuery(CharSequence constraint) {
+                return readLocalWords(constraint);
+            }
+        });
+//        getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                new AlertDialog.Builder(MainActivity.this)
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .setTitle("Delete:")
+//                        .setMessage("Are you sure you want to remove this word")
+//                        .setPositiveButton("Yes",
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog,
+//                                                        int which) {
+//                                        setAs("Delete");
+//                                        updateLocalWordList();
+//                                    }
+//
+//                                }).setNegativeButton("No", null).show();
+//                return false;
+//            }
+//        });
         webV.addJavascriptInterface(new MyJavaScriptInterface(this, mAdapter), "HtmlViewer");
 
         webV.setWebViewClient(new WebViewClient() {
@@ -152,6 +220,8 @@ public class MainActivity extends ListActivity implements OnInitListener {
             public void onClick(View v) {
                 searchBox.setText("");
                 searchBox.requestFocus();
+                getListView().setVisibility(View.VISIBLE);
+                lView.setVisibility(View.INVISIBLE);
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             }
         });
@@ -171,10 +241,32 @@ public class MainActivity extends ListActivity implements OnInitListener {
             }
         });
 
+        searchBox.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //updateStoryData();
+            }
+//
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                getListView().setVisibility(View.VISIBLE);
+                lView.setVisibility(View.INVISIBLE);
+                mCursonAdapter.getFilter().filter(s.toString());
+            }
+        });
+
         searchB.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                getListView().setVisibility(View.INVISIBLE);
+                lView.setVisibility(View.VISIBLE);
                 loadingBar.setVisibility(View.VISIBLE);
                 loadingBar.setIndeterminate(true);
                 isRedirected = false;
@@ -200,6 +292,35 @@ public class MainActivity extends ListActivity implements OnInitListener {
             searchQ = null;
         }
     }
+
+    public void updateWordList()
+    {
+        Cursor c = readLocalWords(null);
+        mCursonAdapter.changeCursor(c);
+    }
+
+    private Cursor readLocalWords(CharSequence constraint) {
+        if (constraint == null  ||  constraint.length () == 0)  {
+            //  Return the full list
+            return mDB.query(DatabaseOpenHelper.TABLE_NAME+prefs.getInt("currentlyActiveTable", 0),
+                    DatabaseOpenHelper.columns, null, new String[] {}, null, null,
+                    DatabaseOpenHelper.WORD+" COLLATE NOCASE");
+        }  else  {
+            String value = "%"+constraint.toString()+"%";
+
+            return mDB.query(DatabaseOpenHelper.TABLE_NAME+prefs.getInt("currentlyActiveTable",0),
+                    DatabaseOpenHelper.columns, "word like ? OR meaning like ? OR synonym like ? ",
+                    new String[] {value, value, value}, null, null,
+                    DatabaseOpenHelper.WORD + " COLLATE NOCASE");
+        }
+
+
+    }
+
+//    private void deleteThisWord(int int id) {
+//        AddWordsToDatabase deleteWord = new AddWordsToDatabase(MainActivity.this);
+//        deleteWord.deleteOneRow(choice, id, getApplicationContext());
+//    }
 
     class MyJavaScriptInterface {
 
@@ -287,15 +408,13 @@ public class MainActivity extends ListActivity implements OnInitListener {
 
     @Override
     protected void onDestroy() {
-
-
         //Close the Text to Speech Library
         if (myTTS != null) {
-
             myTTS.stop();
             myTTS.shutdown();
             //Log.d(TAG, "TTS Destroyed");
         }
+        mDB.close();
         super.onDestroy();
     }
 

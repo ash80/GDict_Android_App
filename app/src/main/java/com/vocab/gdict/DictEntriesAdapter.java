@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import android.content.ActivityNotFoundException;
+//import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+//import android.content.Intent;
+//import android.net.Uri;
 import android.speech.tts.TextToSpeech;
 //import android.speech.tts.TextToSpeech.OnInitListener;
 import android.view.LayoutInflater;
@@ -25,10 +25,12 @@ public class DictEntriesAdapter extends BaseAdapter {
     private final List<DictEntry> mItems = new ArrayList<DictEntry>();
     private final Context mContext;
     private final TextToSpeech myTTS;
+    private final int mActiveTable;
 
-    DictEntriesAdapter(Context ctx, TextToSpeech tts) {
+    DictEntriesAdapter(Context ctx, TextToSpeech tts, int activeTable) {
         mContext = ctx;
         myTTS = tts;
+        mActiveTable = activeTable;
     }
 
     @Override
@@ -141,10 +143,20 @@ public class DictEntriesAdapter extends BaseAdapter {
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.mean, null);
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
                 fos = (TextView) itemLayout.findViewById(R.id.adjunct);
-//                addB = (Button) itemLayout.findViewById(R.id.add_button);
+                addB = (Button) itemLayout.findViewById(R.id.add_button);
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
-
+                addB.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String mWord = anItem.getWord();
+                        String mDef = anItem.getMeaning();
+                        String mFos = anItem.getFosFull();
+                        AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
+                        addWords.insertWord(mWord, mFos, mDef, "", "", "");
+                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return itemLayout;
 
             case DictEntry.MEAN_SYN:
@@ -152,11 +164,22 @@ public class DictEntriesAdapter extends BaseAdapter {
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
                 fos = (TextView) itemLayout.findViewById(R.id.adjunct);
                 syn = (TextView) itemLayout.findViewById(R.id.synonyms);
-//                addB = (Button) itemLayout.findViewById(R.id.add_button);
+                addB = (Button) itemLayout.findViewById(R.id.add_button);
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
                 syn.setText(anItem.getSynonyms());
-
+                addB.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String mWord = anItem.getWord();
+                        String mDef = anItem.getMeaning();
+                        String mFos = anItem.getFosFull();
+                        String mSyn = anItem.getSynonyms();
+                        AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
+                        addWords.insertWord(mWord, mFos, mDef, "", mSyn, "");
+                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return itemLayout;
 
             case DictEntry.MEAN_SYN_ANT:
@@ -165,12 +188,24 @@ public class DictEntriesAdapter extends BaseAdapter {
                 fos = (TextView) itemLayout.findViewById(R.id.adjunct);
                 syn = (TextView) itemLayout.findViewById(R.id.synonyms);
                 ant = (TextView) itemLayout.findViewById(R.id.antonyms);
-//                addB = (Button) itemLayout.findViewById(R.id.add_button);
+                addB = (Button) itemLayout.findViewById(R.id.add_button);
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
                 syn.setText(anItem.getSynonyms());
                 ant.setText(anItem.getAntonyms());
-
+                addB.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String mWord = anItem.getWord();
+                        String mDef = anItem.getMeaning();
+                        String mFos = anItem.getFosFull();
+                        String mSyn = anItem.getSynonyms();
+                        String mAnt = anItem.getAntonyms();
+                        AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
+                        addWords.insertWord(mWord, mFos, mDef, "", mSyn, mAnt);
+                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return itemLayout;
 
             case DictEntry.MEAN_SENT:
@@ -178,11 +213,23 @@ public class DictEntriesAdapter extends BaseAdapter {
                 mean = (TextView) itemLayout.findViewById(R.id.meaning);
                 fos = (TextView) itemLayout.findViewById(R.id.adjunct);
                 sent = (TextView) itemLayout.findViewById(R.id.sentence);
-//                addB = (Button) itemLayout.findViewById(R.id.add_button);
+                addB = (Button) itemLayout.findViewById(R.id.add_button);
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
                 sent.setText(anItem.getSentence());
-
+                addB.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String mWord = anItem.getWord();
+                        String mDef = anItem.getMeaning();
+                        String mFos = anItem.getFosFull();
+                        String mSent = anItem.getSynonyms();
+//                        String mAnt = anItem.getAntonyms();
+                        AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
+                        addWords.insertWord(mWord, mFos, mDef, mSent, "", "");
+                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return itemLayout;
 
             case DictEntry.MEAN_SENT_SYN:
@@ -191,12 +238,24 @@ public class DictEntriesAdapter extends BaseAdapter {
                 fos = (TextView) itemLayout.findViewById(R.id.adjunct);
                 syn = (TextView) itemLayout.findViewById(R.id.synonyms);
                 sent = (TextView) itemLayout.findViewById(R.id.sentence);
-//                addB = (Button) itemLayout.findViewById(R.id.add_button);
+                addB = (Button) itemLayout.findViewById(R.id.add_button);
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
                 syn.setText(anItem.getSynonyms());
                 sent.setText(anItem.getSentence());
-
+                addB.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String mWord = anItem.getWord();
+                        String mDef = anItem.getMeaning();
+                        String mFos = anItem.getFosFull();
+                        String mSent = anItem.getSynonyms();
+                        String mSyn = anItem.getSynonyms();
+                        AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
+                        addWords.insertWord(mWord, mFos, mDef, mSent, mSyn, "");
+                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return itemLayout;
 
             case DictEntry.MEAN_SENT_SYN_ANT:
@@ -206,13 +265,26 @@ public class DictEntriesAdapter extends BaseAdapter {
                 syn = (TextView) itemLayout.findViewById(R.id.synonyms);
                 ant = (TextView) itemLayout.findViewById(R.id.antonyms);
                 sent = (TextView) itemLayout.findViewById(R.id.sentence);
-//                addB = (Button) itemLayout.findViewById(R.id.add_button);
+                addB = (Button) itemLayout.findViewById(R.id.add_button);
                 mean.setText(anItem.getMeaning());
                 fos.setText(anItem.getFosBrief());
                 syn.setText(anItem.getSynonyms());
                 sent.setText(anItem.getSentence());
                 ant.setText(anItem.getAntonyms());
-
+                addB.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String mWord = anItem.getWord();
+                        String mDef = anItem.getMeaning();
+                        String mFos = anItem.getFosFull();
+                        String mSent = anItem.getSynonyms();
+                        String mSyn = anItem.getSynonyms();
+                        String mAnt = anItem.getAntonyms();
+                        AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
+                        addWords.insertWord(mWord, mFos, mDef, mSent, mSyn, mAnt);
+                        Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                });
 			/*((ListActivity) mContext).runOnUiThread(new Runnable() {
 			     @Override
 			     public void run() {
