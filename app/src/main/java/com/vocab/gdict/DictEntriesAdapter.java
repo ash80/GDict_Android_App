@@ -223,7 +223,7 @@ public class DictEntriesAdapter extends BaseAdapter {
                         String mWord = anItem.getWord();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
-                        String mSent = anItem.getSynonyms();
+                        String mSent = anItem.getSentence();
 //                        String mAnt = anItem.getAntonyms();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
                         addWords.insertWord(mWord, mFos, mDef, mSent, "", "");
@@ -249,7 +249,7 @@ public class DictEntriesAdapter extends BaseAdapter {
                         String mWord = anItem.getWord();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
-                        String mSent = anItem.getSynonyms();
+                        String mSent = anItem.getSentence();
                         String mSyn = anItem.getSynonyms();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
                         addWords.insertWord(mWord, mFos, mDef, mSent, mSyn, "");
@@ -277,7 +277,7 @@ public class DictEntriesAdapter extends BaseAdapter {
                         String mWord = anItem.getWord();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
-                        String mSent = anItem.getSynonyms();
+                        String mSent = anItem.getSentence();
                         String mSyn = anItem.getSynonyms();
                         String mAnt = anItem.getAntonyms();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);

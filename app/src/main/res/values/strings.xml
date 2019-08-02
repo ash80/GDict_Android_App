@@ -9,5 +9,6 @@
     <string name="desc">Description</string>
     <string name="action_settings">Settings</string>
     <string name="action_credits">Credits</string>
+    <string name="filter_title_view_dict">GDict Filter</string>
 
 </resources>

@@ -30,7 +30,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FilterQueryProvider;
@@ -39,7 +38,6 @@ import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-//import android.graphics.Bitmap;
 
 
 public class MainActivity extends ListActivity implements OnInitListener {
@@ -80,7 +78,7 @@ public class MainActivity extends ListActivity implements OnInitListener {
                 editor.putInt("currentlyActiveTable", 0);
                 editor.putBoolean("resetListStatus_0", true);
                 editor.putBoolean("IsFirstTime", false);
-                editor.commit();
+                editor.apply();
             } catch (IOException ioe) {
                 throw new Error("Unable to create database");
             }
@@ -114,13 +112,13 @@ public class MainActivity extends ListActivity implements OnInitListener {
                                 openCounter = 0;
                                 SharedPreferences.Editor editor = prefs.edit();
                                 editor.putInt("openCounter", openCounter);
-                                editor.commit();
+                                editor.apply();
                             }
                         }).show();
             }
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("openCounter", openCounter);
-            editor.commit();
+            editor.apply();
         }
         setContentView(R.layout.activity_main);
         myTTS = new TextToSpeech(this, this);
@@ -302,16 +300,21 @@ public class MainActivity extends ListActivity implements OnInitListener {
     private Cursor readLocalWords(CharSequence constraint) {
         if (constraint == null  ||  constraint.length () == 0)  {
             //  Return the full list
-            return mDB.query(DatabaseOpenHelper.TABLE_NAME+prefs.getInt("currentlyActiveTable", 0),
-                    DatabaseOpenHelper.columns, null, new String[] {}, null, null,
+            return mDB.query(DatabaseOpenHelper.TABLE_NAME
+                            +prefs.getInt("currentlyActiveTable", 0),
+                    DatabaseOpenHelper.columns,
+                    null, new String[] {}, null, null,
                     DatabaseOpenHelper.WORD+" COLLATE NOCASE");
         }  else  {
             String value = "%"+constraint.toString()+"%";
 
-            return mDB.query(DatabaseOpenHelper.TABLE_NAME+prefs.getInt("currentlyActiveTable",0),
-                    DatabaseOpenHelper.columns, "word like ? OR meaning like ? OR synonym like ? ",
-                    new String[] {value, value, value}, null, null,
-                    DatabaseOpenHelper.WORD + " COLLATE NOCASE");
+            return mDB.query(DatabaseOpenHelper.TABLE_NAME
+                            +prefs.getInt("currentlyActiveTable",0),
+                    null, "word like ? UNION SELECT * FROM "
+                            +DatabaseOpenHelper.TABLE_NAME
+                            +prefs.getInt("currentlyActiveTable",0)+
+                            " WHERE synonym like ?",
+                    new String[] {value, value}, null, null, null);
         }
 
 
