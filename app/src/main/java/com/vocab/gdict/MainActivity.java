@@ -303,7 +303,7 @@ public class MainActivity extends ListActivity implements OnInitListener {
             return mDB.query(DatabaseOpenHelper.TABLE_NAME
                             +prefs.getInt("currentlyActiveTable", 0),
                     DatabaseOpenHelper.columns,
-                    null, new String[] {}, null, null,
+                    null, null, null, null,
                     DatabaseOpenHelper.WORD+" COLLATE NOCASE");
         }  else  {
             String value = "%"+constraint.toString()+"%";
