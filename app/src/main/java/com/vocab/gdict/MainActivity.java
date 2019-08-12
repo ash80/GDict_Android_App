@@ -304,7 +304,7 @@ public class MainActivity extends ListActivity implements OnInitListener {
                             +prefs.getInt("currentlyActiveTable", 0),
                     DatabaseOpenHelper.columns,
                     null, null, null, null,
-                    DatabaseOpenHelper.WORD+" COLLATE NOCASE");
+                    DatabaseOpenHelper.WORD);
         }  else  {
             String value = "%"+constraint.toString()+"%";
 
