@@ -70,18 +70,14 @@ public class MainActivity extends ListActivity implements OnInitListener {
         IsFirstTime = prefs.getBoolean("IsFirstTime", true);
         mDbHelper = new DatabaseOpenHelper(this);
         if(IsFirstTime) {
-            try {
-                mDbHelper.createDataBase();
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("Status_0", "Saved Words");
-                editor.putInt("currentNumberOfTables", 1);
-                editor.putInt("currentlyActiveTable", 0);
-                editor.putBoolean("resetListStatus_0", true);
-                editor.putBoolean("IsFirstTime", false);
-                editor.apply();
-            } catch (IOException ioe) {
-                throw new Error("Unable to create database");
-            }
+            mDbHelper.createDataBase();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("Status_0", "Saved Words");
+            editor.putInt("currentNumberOfTables", 1);
+            editor.putInt("currentlyActiveTable", 0);
+            editor.putBoolean("resetListStatus_0", true);
+            editor.putBoolean("IsFirstTime", false);
+            editor.apply();
         }
         activeTable = prefs.getInt("currentlyActiveTable", 0);
         isRedirected = false;
@@ -122,9 +118,9 @@ public class MainActivity extends ListActivity implements OnInitListener {
         }
         setContentView(R.layout.activity_main);
         myTTS = new TextToSpeech(this, this);
-        searchBox = (EditText) findViewById(R.id.word_search);
-        clearB = (Button) findViewById(R.id.clear_button);
-        searchB = (Button) findViewById(R.id.search_button);
+        searchBox = findViewById(R.id.word_search);
+        clearB = findViewById(R.id.clear_button);
+        searchB = findViewById(R.id.search_button);
         mDB = mDbHelper.getWritableDatabase();
         Cursor localWordsCursor = readLocalWords(null);
         mCursonAdapter = new SimpleCursorAdapter(this, R.layout.mean_sent_syn_ant_local,
