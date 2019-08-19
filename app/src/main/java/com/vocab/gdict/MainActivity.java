@@ -298,7 +298,7 @@ public class MainActivity extends ListActivity implements OnInitListener {
             //  Return the full list
             return mDB.query(DatabaseOpenHelper.TABLE_NAME
                             +prefs.getInt("currentlyActiveTable", 0),
-                    DatabaseOpenHelper.columns,
+                    null,
                     null, null, null, null,
                     DatabaseOpenHelper.WORD);
         }  else  {

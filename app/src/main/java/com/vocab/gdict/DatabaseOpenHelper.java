@@ -22,18 +22,18 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	final static String ANTONYM = "antonym";
 	final static String PART_OF_SPEECH = "part_of_speech";
 	final static String[] columns = { _ID, WORD, PART_OF_SPEECH, MEANING, SENTENCE, SYNONYM, ANTONYM };
-	private static int numberOfTables;
+	private int numberOfTables;
 
-    private static String[] CREATE_CMD;
+    private String[] CREATE_CMD;
 
 	final private static String NAME = "saved_words";
 	private String DB_PATH;
 	final private static Integer VERSION = 1;
-	final private Context mContext;
+//	final private Context mContext;
 
-	public DatabaseOpenHelper(Context context) {
+	DatabaseOpenHelper(Context context) {
 		super(context, NAME, null, VERSION);
-		this.mContext = context;
+//		this.mContext = context;
 		this.numberOfTables = 4;
         this.CREATE_CMD = new String[this.numberOfTables];
 		for(int i = 0; i<this.numberOfTables; i++) {
@@ -48,7 +48,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 + ANTONYM + " TEXT, "
                 + "status TEXT);";
 		}
-		this.DB_PATH = Environment.getDataDirectory()+"/data/"+mContext.getPackageName()
+		this.DB_PATH = Environment.getDataDirectory()+"/data/"+context.getPackageName()
                 +"/databases/" + NAME;
 	}
 
@@ -64,10 +64,10 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 		// N/A
 	}
 
-	public boolean createDataBase() {
+	boolean createDataBase() {
         this.getReadableDatabase();
         SQLiteDatabase getDB = SQLiteDatabase.openOrCreateDatabase(this.DB_PATH, null);
-        return getDB != null ? true : false;
+        return getDB != null;
     }
 
 }
