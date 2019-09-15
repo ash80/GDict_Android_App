@@ -204,6 +204,8 @@ public class MainActivity extends ListActivity implements OnInitListener {
 
                 loadingBar.setIndeterminate(false);
                 loadingBar.setVisibility(View.INVISIBLE);
+                getListView().setVisibility(View.INVISIBLE);
+                lView.setVisibility(View.VISIBLE);
                 // onlyOnce = false;
                 //loadingBar.setProgress(0);
             }
@@ -259,8 +261,6 @@ public class MainActivity extends ListActivity implements OnInitListener {
 
             @Override
             public void onClick(View v) {
-                getListView().setVisibility(View.INVISIBLE);
-                lView.setVisibility(View.VISIBLE);
                 loadingBar.setVisibility(View.VISIBLE);
                 loadingBar.setIndeterminate(true);
                 isRedirected = false;
