@@ -109,8 +109,9 @@ public class DictEntriesAdapter extends BaseAdapter {
                 itemLayout = (LinearLayout) inflater.inflate(R.layout.the_word, null);
                 word = (TextView) itemLayout.findViewById(R.id.the_word);
                 addB = (Button) itemLayout.findViewById(R.id.speak_button);
-                //fos = (TextView) itemLayout.findViewById(R.id.pronunciation);
+                fos = (TextView) itemLayout.findViewById(R.id.pronunciation);
                 word.setText(anItem.getWord());
+                fos.setText(anItem.getPronunciationString());
                 addB.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -150,10 +151,12 @@ public class DictEntriesAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         String mWord = anItem.getWord();
+                        String mPronunciation = anItem.getPronunciationString();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
-                        addWords.insertWord(mWord, mFos, mDef, "", "", "");
+                        addWords.insertWord(mWord, mFos, mDef, "", "",
+                                "", mPronunciation);
                         Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -172,11 +175,13 @@ public class DictEntriesAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         String mWord = anItem.getWord();
+                        String mPronunciation = anItem.getPronunciationString();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
                         String mSyn = anItem.getSynonyms();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
-                        addWords.insertWord(mWord, mFos, mDef, "", mSyn, "");
+                        addWords.insertWord(mWord, mFos, mDef, "", mSyn,
+                                "", mPronunciation);
                         Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -197,12 +202,14 @@ public class DictEntriesAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         String mWord = anItem.getWord();
+                        String mPronunciation = anItem.getPronunciationString();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
                         String mSyn = anItem.getSynonyms();
                         String mAnt = anItem.getAntonyms();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
-                        addWords.insertWord(mWord, mFos, mDef, "", mSyn, mAnt);
+                        addWords.insertWord(mWord, mFos, mDef, "", mSyn, mAnt,
+                                mPronunciation);
                         Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -221,12 +228,14 @@ public class DictEntriesAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         String mWord = anItem.getWord();
+                        String mPronunciation = anItem.getPronunciationString();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
                         String mSent = anItem.getSentence();
 //                        String mAnt = anItem.getAntonyms();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
-                        addWords.insertWord(mWord, mFos, mDef, mSent, "", "");
+                        addWords.insertWord(mWord, mFos, mDef, mSent, "", "",
+                                mPronunciation);
                         Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -247,12 +256,14 @@ public class DictEntriesAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         String mWord = anItem.getWord();
+                        String mPronunciation = anItem.getPronunciationString();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
                         String mSent = anItem.getSentence();
                         String mSyn = anItem.getSynonyms();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
-                        addWords.insertWord(mWord, mFos, mDef, mSent, mSyn, "");
+                        addWords.insertWord(mWord, mFos, mDef, mSent, mSyn, "",
+                                mPronunciation);
                         Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -275,26 +286,19 @@ public class DictEntriesAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         String mWord = anItem.getWord();
+                        String mPronunciation = anItem.getPronunciationString();
                         String mDef = anItem.getMeaning();
                         String mFos = anItem.getFosFull();
                         String mSent = anItem.getSentence();
                         String mSyn = anItem.getSynonyms();
                         String mAnt = anItem.getAntonyms();
                         AddWordsToDatabase addWords = new AddWordsToDatabase(mContext, mActiveTable);
-                        addWords.insertWord(mWord, mFos, mDef, mSent, mSyn, mAnt);
+                        addWords.insertWord(mWord, mFos, mDef, mSent, mSyn, mAnt,
+                                mPronunciation);
                         Toast.makeText(mContext, "Saved", Toast.LENGTH_SHORT).show();
                     }
                 });
-			/*((ListActivity) mContext).runOnUiThread(new Runnable() {
-			     @Override
-			     public void run() {
-					mean.setText(anItem.getMeaning());
-					fos.setText(anItem.getFosBrief());
-					syn.setText(anItem.getSynonyms());
-					sent.setText(anItem.getSentence());
-					ant.setText(anItem.getAntonyms());
-			    }
-			});*/
+
                 return itemLayout;
 
             case DictEntry.ENCYCLOPEDIA:

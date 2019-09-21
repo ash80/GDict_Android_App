@@ -127,9 +127,9 @@ public class MainActivity extends ListActivity implements OnInitListener {
                 localWordsCursor,
                 new String[] { DatabaseOpenHelper.columns[1], DatabaseOpenHelper.columns[2],
                                DatabaseOpenHelper.columns[3], DatabaseOpenHelper.columns[4],
-                               DatabaseOpenHelper.columns[5] },
+                               DatabaseOpenHelper.columns[5], DatabaseOpenHelper.columns[7] },
                 new int[] { R.id.local_word, R.id.local_pos, R.id.local_meaning,
-                R.id.local_sentence, R.id.local_synonyms },
+                R.id.local_sentence, R.id.local_synonyms, R.id.local_pronunciation },
                 0);
         lView = (ListView) findViewById(R.id.second_list_view);
 
@@ -269,7 +269,7 @@ public class MainActivity extends ListActivity implements OnInitListener {
                 mAdapter.clear();
                 hideSoftKeyboard(MainActivity.this, v);
                 // webV.loadUrl("https://www.google.com/search?q=define%3A" + query + "&num=1");
-                webV.loadUrl("https://www.google.com/search?q=define+" + query + "&num=1");
+                webV.loadUrl("https://www.google.com/search?q=" + query + "+meaning&num=1");
                 // webV.removeJavascriptInterface("HtmlViewer");
                 // webV.addJavascriptInterface(new MyJavaScriptInterface(getApplicationContext(),mAdapter), "HtmlViewer");
             }

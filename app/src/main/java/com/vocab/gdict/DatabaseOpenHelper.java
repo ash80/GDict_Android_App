@@ -21,7 +21,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	final static String SYNONYM = "synonym";
 	final static String ANTONYM = "antonym";
 	final static String PART_OF_SPEECH = "part_of_speech";
-	final static String[] columns = { _ID, WORD, PART_OF_SPEECH, MEANING, SENTENCE, SYNONYM, ANTONYM };
+	final static String STATUS = "status";
+	final static String[] columns = { _ID, WORD, PART_OF_SPEECH, MEANING, SENTENCE, SYNONYM, ANTONYM, STATUS };
 	private int numberOfTables;
 
     private String[] CREATE_CMD;
@@ -46,7 +47,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 + SENTENCE + " TEXT, "
                 + SYNONYM + " TEXT, "
                 + ANTONYM + " TEXT, "
-                + "status TEXT);";
+                + STATUS + " TEXT);";
 		}
 		this.DB_PATH = Environment.getDataDirectory()+"/data/"+context.getPackageName()
                 +"/databases/" + NAME;

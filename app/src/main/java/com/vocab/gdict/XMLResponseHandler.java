@@ -31,6 +31,7 @@ class XMLResponseHandler {
     private static final String wordName = "vk_ans";
     private static final String wordName1 = "dDoNo";
     private static final String phonetic = "lr_dct_ent_ph";
+    private static final String phonetic_span = "lr_dct_ph";
     private static final String speaker = "lr_dct_spkr lr_dct_spkr_off";
     private static final String figSpeech = "lr_dct_sf_h";
 //    private static final String figSpeechInfo = "lr_dct_lbl_inl vk_gy";
@@ -200,11 +201,11 @@ class XMLResponseHandler {
                 boolean j = false; //fos not ready
                 boolean k = false; // fosDesc not ready
                 boolean phV = false; // is Phrasal verb?
-                final String audio;
+                String pronunciation = "";
                 if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", phonetic))
-                    audio = getAudioLink(); //exits at the closing divTag of Audio
-                else if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", sentence)) {
-                    audio = "";
+                    pronunciation = getAudioLink(); //exits at the closing divTag of Audio
+                final String final_pronun = pronunciation;
+                if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", sentence)) {
                     while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))) {
                         //fosDesc="";
                         if (eventType == XmlPullParser.TEXT) {
@@ -221,11 +222,10 @@ class XMLResponseHandler {
                     }
                 }
                 else
-                    audio = "";
                 ((ListActivity) ctx).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mAdapter.add(new DictEntry(DictEntry.THE_WORD, word, audio));
+                        mAdapter.add(new DictEntry(DictEntry.THE_WORD, word, final_pronun));
                     }
                 });
                 while (!(eventType == XmlPullParser.END_DOCUMENT || (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", dctEnter)))) {
@@ -259,10 +259,10 @@ class XMLResponseHandler {
                     }
 
                     if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", sen)) {
-                        printRests(word, fos);
+                        printRests(word, final_pronun, fos);
                     }
                     if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", subsen)) {
-                        printRests(word, fos);
+                        printRests(word, final_pronun, fos);
                     }
                 }
                 // TODO: Code for additional dictionary
@@ -310,10 +310,12 @@ class XMLResponseHandler {
 
     private String getAudioLink() throws XmlPullParserException, IOException {
         int i = 1;
-        //String pronunciation="";
+        String pronunciation="";
 
         while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))) {
             eventType = xpp.next();
+            if (eventType == XmlPullParser.TEXT)
+                pronunciation += xpp.getText();
             if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag))
                 i++;
             if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
@@ -321,7 +323,7 @@ class XMLResponseHandler {
             if (i == 0)
                 break;
         }
-        return null;
+        return pronunciation;
     }
 
     private String getFos() throws XmlPullParserException, IOException {
@@ -349,7 +351,7 @@ class XMLResponseHandler {
         return fosDesTemp;
     }
 
-    private void printRests(String w, String fos) throws XmlPullParserException, IOException {
+    private void printRests(String w, String pronunciation, String fos) throws XmlPullParserException, IOException {
         boolean isSubsen = false;
         if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", subsen)) {
             isSubsen = true;
@@ -441,10 +443,11 @@ class XMLResponseHandler {
             final String fos1 = fos;
             final String mean1 = mean;
             final String w1 = w;
+            final String pronunciation1 = pronunciation;
             ((ListActivity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mAdapter.add(new DictEntry(DictEntry.ONLY_MEAN, w1, fos1, mean1));
+                    mAdapter.add(new DictEntry(DictEntry.ONLY_MEAN, w1, pronunciation1, fos1, mean1));
                 }
             });
         } else if (sent.equals("") && ant.equals("")) {
@@ -452,10 +455,11 @@ class XMLResponseHandler {
             final String mean1 = mean;
             final String syn1 = syn;
             final String w1 = w;
+            final String pronunciation1 = pronunciation;
             ((ListActivity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mAdapter.add(new DictEntry(DictEntry.MEAN_SYN, w1, fos1, mean1, syn1));
+                    mAdapter.add(new DictEntry(DictEntry.MEAN_SYN, w1, pronunciation1, fos1, mean1, syn1));
                 }
             });
         } else if (sent.equals("")) {
@@ -464,10 +468,11 @@ class XMLResponseHandler {
             final String syn1 = syn;
             final String ant1 = ant;
             final String w1 = w;
+            final String pronunciation1 = pronunciation;
             ((ListActivity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mAdapter.add(new DictEntry(DictEntry.MEAN_SYN_ANT, w1, fos1, mean1, syn1, ant1));
+                    mAdapter.add(new DictEntry(DictEntry.MEAN_SYN_ANT, w1, pronunciation1, fos1, mean1, syn1, ant1));
                 }
             });
         } else if (syn.equals("")) {
@@ -475,10 +480,11 @@ class XMLResponseHandler {
             final String mean1 = mean;
             final String sent1 = sent;
             final String w1 = w;
+            final String pronunciation1 = pronunciation;
             ((ListActivity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mAdapter.add(new DictEntry(DictEntry.MEAN_SENT, w1, fos1, mean1, sent1));
+                    mAdapter.add(new DictEntry(DictEntry.MEAN_SENT, w1, pronunciation1, fos1, mean1, sent1));
                 }
             });
         } else if (ant.equals("")) {
@@ -487,10 +493,11 @@ class XMLResponseHandler {
             final String sent1 = sent;
             final String syn1 = syn;
             final String w1 = w;
+            final String pronunciation1 = pronunciation;
             ((ListActivity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mAdapter.add(new DictEntry(DictEntry.MEAN_SENT_SYN, w1, fos1, mean1, sent1, syn1));
+                    mAdapter.add(new DictEntry(DictEntry.MEAN_SENT_SYN, w1, pronunciation1, fos1, mean1, sent1, syn1));
                 }
             });
         } else {
@@ -500,10 +507,11 @@ class XMLResponseHandler {
             final String syn1 = syn;
             final String ant1 = ant;
             final String w1 = w;
+            final String pronunciation1 = pronunciation;
             ((ListActivity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mAdapter.add(new DictEntry(w1, fos1, mean1, sent1, syn1, ant1));
+                    mAdapter.add(new DictEntry(w1, pronunciation1, fos1, mean1, sent1, syn1, ant1));
                 }
             });
         }

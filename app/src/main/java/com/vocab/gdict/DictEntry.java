@@ -14,7 +14,7 @@ class DictEntry {
     private int entryType;
     private String word;
     private String fosFull;
-    private String audioURL;
+    private String pronunciationString;
     private String fos;
     private String fosDesc;
     private String sentence;
@@ -22,9 +22,9 @@ class DictEntry {
     private String synonyms;
     private String antonyms;
 
-    DictEntry(String w, String fosFull, String mean, String sent, String syn, String ant) {
+    DictEntry(String w, String pronunciation, String fosFull, String mean, String sent, String syn, String ant) {
         this.setEntryType(DictEntry.MEAN_SENT_SYN_ANT);
-        setTheValues(w, null, mean, sent, fosFull, null, syn, ant);
+        setTheValues(w, pronunciation, mean, sent, fosFull, null, syn, ant);
     }
 
     DictEntry(String fosF, String fosD) {
@@ -37,40 +37,40 @@ class DictEntry {
         setTheValues(searchTitle, null, briefDesc, summary, null, null, null, null);
     }
 
-    DictEntry(int entT, String w, String audio) {
+    DictEntry(int entT, String w, String pronunciation) {
         this.setEntryType(entT);
         if (entT == THE_WORD)
-            setTheValues(w, audio, null, null, null, null, null, null);
+            setTheValues(w, pronunciation, null, null, null, null, null, null);
     }
 
-    DictEntry(int entT, String w, String arg1, String arg2) {
+    DictEntry(int entT, String w, String pronunciationString, String fosFull, String meaning) {
         this.setEntryType(entT);
         if (entT == ONLY_MEAN)
-            setTheValues(w, null, arg2, null, arg1, null, null, null);
+            setTheValues(w, pronunciationString, meaning, null, fosFull, null, null, null);
     }
 
-    DictEntry(int entT, String w, String arg1, String arg2, String arg3) {
+    DictEntry(int entT, String w, String pronunciationString, String arg1, String arg2, String arg3) {
         this.setEntryType(entT);
         if (entT == DictEntry.MEAN_SYN)
-            setTheValues(w, null, arg2, null, arg1, null, arg3, null);
+            setTheValues(w, pronunciationString, arg2, null, arg1, null, arg3, null);
         else if (entT == DictEntry.MEAN_SENT)
-            setTheValues(w, null, arg2, arg3, arg1, null, null, null);
+            setTheValues(w, pronunciationString, arg2, arg3, arg1, null, null, null);
     }
 
-    DictEntry(int entT, String w, String arg1, String arg2, String arg3, String arg4) {
+    DictEntry(int entT, String w, String pronunciationString, String arg1, String arg2, String arg3, String arg4) {
         this.setEntryType(entT);
         if (entT == DictEntry.MEAN_SYN_ANT)
-            setTheValues(w, null, arg2, null, arg1, null, arg3, arg4);
+            setTheValues(w, pronunciationString, arg2, null, arg1, null, arg3, arg4);
         else if (entT == DictEntry.MEAN_SENT_SYN)
-            setTheValues(w, null, arg2, arg3, arg1, null, arg4, null);
+            setTheValues(w, pronunciationString, arg2, arg3, arg1, null, arg4, null);
     }
 
 
-    private void setTheValues(String w, String audio, String mean, String sent, String fosFull, String fosDesc, String syn, String ant) {
+    private void setTheValues(String w, String pronunciation, String mean, String sent, String fosFull, String fosDesc, String syn, String ant) {
         switch (entryType) {
             case THE_WORD:
                 this.setWord(w);
-                this.setAudioURL(audio);
+                this.setPronunciationString(pronunciation);
                 break;
             case FOS:
                 this.fosFull = fosFull;
@@ -78,12 +78,14 @@ class DictEntry {
                 break;
             case ONLY_MEAN:
                 this.setWord(w);
+                this.setPronunciationString(pronunciation);
                 this.fosFull = fosFull;
                 this.meaning = mean;
                 this.fos = getFosBrief();
                 break;
             case MEAN_SYN:
                 this.setWord(w);
+                this.setPronunciationString(pronunciation);
                 this.fosFull = fosFull;
                 this.meaning = mean;
                 this.synonyms = syn;
@@ -91,6 +93,7 @@ class DictEntry {
                 break;
             case MEAN_SYN_ANT:
                 this.setWord(w);
+                this.setPronunciationString(pronunciation);
                 this.fosFull = fosFull;
                 this.meaning = mean;
                 this.synonyms = syn;
@@ -99,6 +102,7 @@ class DictEntry {
                 break;
             case MEAN_SENT:
                 this.setWord(w);
+                this.setPronunciationString(pronunciation);
                 this.fosFull = fosFull;
                 this.meaning = mean;
                 this.sentence = sent;
@@ -106,6 +110,7 @@ class DictEntry {
                 break;
             case MEAN_SENT_SYN:
                 this.setWord(w);
+                this.setPronunciationString(pronunciation);
                 this.fosFull = fosFull;
                 this.meaning = mean;
                 this.synonyms = syn;
@@ -114,6 +119,7 @@ class DictEntry {
                 break;
             case MEAN_SENT_SYN_ANT:
                 this.setWord(w);
+                this.setPronunciationString(pronunciation);
                 this.fosFull = fosFull;
                 this.meaning = mean;
                 this.synonyms = syn;
@@ -163,8 +169,12 @@ class DictEntry {
 //        return audioURL;
 //    }
 
-    private void setAudioURL(String audio) {
-        this.audioURL = audio;
+    private void setPronunciationString(String pronunciation) {
+        this.pronunciationString = pronunciation;
+    }
+
+    String getPronunciationString() {
+        return this.pronunciationString;
     }
 
     String getFosFull() {
