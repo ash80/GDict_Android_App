@@ -24,38 +24,45 @@ class XMLResponseHandler {
     private static final String tableTag = "table";
     private static final String trTag = "tr";
 
-    private static final String dctEnter = "lr_dct_ent";
+    private static final String dctEnter = "VpH2eb";
+    private static final String dctEnter_old = "lr_dct_ent";
     private static final String searchTitle = "kno-ecr-pt kno-fb-ctx";
 //    private static final String wikiSearch = "kp-blk";
-    private static final String wikiSearch = "kp-blk _Z7 _RJe";
-    private static final String wordName = "vk_ans";
-    private static final String wordName1 = "dDoNo";
-    private static final String phonetic = "lr_dct_ent_ph";
+    private static final String wikiSearch = "a1MHvb"; //"kp-blk _Z7 _RJe";
+    private static final String wordName = "dDoNo"; // "vk_ans";
+    private static final String wordName1 = "GgmXif"; // "dDoNo";
+
+    private static final String phonetic = "S23sjd";
+    private static final String phonetic_old = "lr_dct_ent_ph";
+
 //    private static final String phonetic_span = "lr_dct_ph";
 //    private static final String speaker = "lr_dct_spkr lr_dct_spkr_off";
-    private static final String figSpeech = "lr_dct_sf_h";
-//    private static final String figSpeechInfo = "lr_dct_lbl_inl vk_gy";
+    private static final String figSpeech = "pgRvse"; // "lr_dct_sf_h";
+    private static final String figSpeech_old = "lr_dct_sf_h";
+
     private static final String fsDesc = "xpdxpnd vk_gy";
-//    private static final String sens = "lr_dct_sf_sens";
-    private static final String sen = "lr_dct_sf_sen";
-    private static final String subsen = "lr_dct_sf_subsen";
-//    private static final String strtMeanSent = "display:inline";
-    private static final String infoInfoMean = "lr_dct_lbl_blk lr_dct_lbl_box";
-    private static final String infoMean = "lr_dct_lbl_blk vk_gy";
-//    private static final String meaning = "display:inline";
+
+    private static final String sen = "thODed";
+    private static final String subsen = "csWlI";
+    private static final String sen_old = "lr_dct_sf_sen";
+    private static final String subsen_old = "lr_dct_sf_subsen";
+
+    private static final String infoInfoMean = "mQo3nc hsL7ld"; // "lr_dct_lbl_blk lr_dct_lbl_box";
+    private static final String infoMean = "lr_dct_lbl_blk lr_dct_lbl_box"; // "lr_dct_lbl_blk vk_gy";
+
     private static final String sentence = "vk_gy";
-    private static final String synAntEnt = "vk_tbl vk_gy";
-    private static final String simiOppo = "q3q3Oc";
+
+//    private static final String simiOppo = "q3q3Oc";
     private static final String similar_class = "pdpvld";
     private static final String opposite_class = "hVpeib";
-    private static final String simiOppoWords = "lLE0jd";
-//    private static final String startOrigin = "vk_sh vk_gy";
+//    private static final String simiOppoWords = "lLE0jd";
+
     private static final String briefDesc = "_CLb kno-fb-ctx";
     //private static final String briefDesc = "kno-fb-ctx";
 //    private static final String briefDescAlt = "_gdf kno-fb-ctx";
     private static final String briefDescAlt = "_gdf";
     private static final String summary = "kno-rdesc";
-    private static final String onlySummaryDesc = "_oDd";
+    private static final String onlySummaryDesc = "viOShc"; // "_oDd";
 
     //private String mLat, mLng, mMag;
     //private boolean mIsParsingLat, mIsParsingLng, mIsParsingMag;
@@ -103,14 +110,17 @@ class XMLResponseHandler {
             // Get the first Parser event and start iterating over the XML document
             eventType = xpp.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", dctEnter) && !hasAttr(divTag, "class", phonetic)) {
+                if (eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", dctEnter) ||
+                        hasAttr(divTag, "class", dctEnter_old)) && ! (hasAttr(divTag, "class", phonetic) ||
+                        hasAttr(divTag, "class", phonetic_old))) {
                     idx1--;
                     if (idx1 != 0)
                         eventType = xpp.next();
                 } else {
                     eventType = xpp.next();
                 }
-                if (idx1 == 0 && eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", dctEnter))
+                if (idx1 == 0 && eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", dctEnter) ||
+                        hasAttr(divTag, "class", dctEnter_old)))
                     break;
             }
 
@@ -128,14 +138,6 @@ class XMLResponseHandler {
                     }
                 }
                 if (eventType == XmlPullParser.END_DOCUMENT) {
-					/*((ListActivity) ctx).runOnUiThread(new Runnable() {
-					     @Override
-					     public void run() {
-					    	 mAdapter.add(new DictEntry("Dictionary Not Found",
-					    			 "Either dictionary is not available for this query,\n"+
-					    			 	"or the device is not connected to the internet"));
-					    }
-					});*/
                     runDictNotFound();
                 }
                 else {
@@ -166,7 +168,8 @@ class XMLResponseHandler {
                                 eventType = xpp.next();
                             smry = xpp.getText();
                         }
-                    } else {
+                    }
+                    else {
                         while (!((eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", onlySummaryDesc)) ||
                                 eventType == XmlPullParser.END_DOCUMENT)) {
                             eventType = xpp.next();
@@ -204,7 +207,8 @@ class XMLResponseHandler {
                 boolean k = false; // fosDesc not ready
                 boolean phV = false; // is Phrasal verb?
                 String pronunciation = "";
-                if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", phonetic))
+                if (eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", phonetic) ||
+                        hasAttr(divTag, "class", phonetic_old)))
                     pronunciation = getAudioLink(); //exits at the closing divTag of Audio
                 final String final_pronun = pronunciation;
                 if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", sentence)) {
@@ -230,9 +234,14 @@ class XMLResponseHandler {
                         mAdapter.add(new DictEntry(DictEntry.THE_WORD, word, final_pronun));
                     }
                 });
-                while (!(eventType == XmlPullParser.END_DOCUMENT || (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", dctEnter)))) {
+                while (!(eventType == XmlPullParser.END_DOCUMENT || (
+                        eventType == XmlPullParser.START_TAG &&
+                                (hasAttr(divTag, "class", dctEnter) ||
+                        hasAttr(divTag, "class", dctEnter_old))))) {
                     eventType = xpp.next();
-                    if (!phV && (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", figSpeech))) {
+                    if (!phV && (eventType == XmlPullParser.START_TAG &&
+                            (hasAttr(divTag, "class", figSpeech) ||
+                            hasAttr(divTag, "class", figSpeech_old)))) {
                         fos = getFos();
                         j = true; //fos ready
                         System.out.println(fos);
@@ -260,10 +269,12 @@ class XMLResponseHandler {
                         k = false;
                     }
 
-                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", sen)) {
+                    if (eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", sen) ||
+                            hasAttr(divTag, "class", sen_old))) {
                         printRests(word, final_pronun, fos);
                     }
-                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", subsen)) {
+                    if (eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", subsen) ||
+                            hasAttr(divTag, "class", subsen_old))) {
                         printRests(word, final_pronun, fos);
                     }
                 }
@@ -271,7 +282,8 @@ class XMLResponseHandler {
                 int nextIdx = idx;
 //                eventType = xpp.next();
                 while (eventType != XmlPullParser.END_DOCUMENT) {
-                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", dctEnter)) {
+                    if (eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", dctEnter) ||
+                            hasAttr(divTag, "class", dctEnter_old))) {
                         nextIdx++;
                         break;
                     } else {
@@ -355,7 +367,8 @@ class XMLResponseHandler {
 
     private void printRests(String w, String pronunciation, String fos) throws XmlPullParserException, IOException {
         boolean isSubsen = false;
-        if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", subsen)) {
+        if (eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", subsen) ||
+                hasAttr(divTag, "class", subsen_old))) {
             isSubsen = true;
         }
         //List<String> Meaning;

@@ -268,7 +268,7 @@ public class MainActivity extends ListActivity implements OnInitListener {
                 String query = searchBox.getText().toString();
                 mAdapter.clear();
                 hideSoftKeyboard(MainActivity.this, v);
-                webV.loadUrl("https://www.google.com/search?q=define%3A" + query + "&num=1");
+                webV.loadUrl("https://www.google.com/search?q=define+" + query + "&num=1");
 //                webV.loadUrl("https://www.google.com/search?q=" + query + "+meaning&num=1");
                 // webV.removeJavascriptInterface("HtmlViewer");
                 // webV.addJavascriptInterface(new MyJavaScriptInterface(getApplicationContext(),mAdapter), "HtmlViewer");
