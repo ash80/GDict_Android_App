@@ -31,8 +31,8 @@ class XMLResponseHandler {
     private static final String wordName = "vk_ans";
     private static final String wordName1 = "dDoNo";
     private static final String phonetic = "lr_dct_ent_ph";
-    private static final String phonetic_span = "lr_dct_ph";
-    private static final String speaker = "lr_dct_spkr lr_dct_spkr_off";
+//    private static final String phonetic_span = "lr_dct_ph";
+//    private static final String speaker = "lr_dct_spkr lr_dct_spkr_off";
     private static final String figSpeech = "lr_dct_sf_h";
 //    private static final String figSpeechInfo = "lr_dct_lbl_inl vk_gy";
     private static final String fsDesc = "xpdxpnd vk_gy";
@@ -45,9 +45,11 @@ class XMLResponseHandler {
 //    private static final String meaning = "display:inline";
     private static final String sentence = "vk_gy";
     private static final String synAntEnt = "vk_tbl vk_gy";
-//    private static final String synAnt = "lr_dct_nyms_ttl";
-    private static final String synAntMore = "lr_dct_more_btn";
-    private static final String startOrigin = "vk_sh vk_gy";
+    private static final String simiOppo = "q3q3Oc";
+    private static final String similar_class = "pdpvld";
+    private static final String opposite_class = "hVpeib";
+    private static final String simiOppoWords = "lLE0jd";
+//    private static final String startOrigin = "vk_sh vk_gy";
     private static final String briefDesc = "_CLb kno-fb-ctx";
     //private static final String briefDesc = "kno-fb-ctx";
 //    private static final String briefDescAlt = "_gdf kno-fb-ctx";
@@ -365,6 +367,8 @@ class XMLResponseHandler {
         String sent = "";
         String syn = "";
         String ant = "";
+        boolean bothDone = false;
+
         int i = 1;
         while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))) {
             eventType = xpp.next();
@@ -405,39 +409,129 @@ class XMLResponseHandler {
                 sent = SentenceTemp;
             }
 
-            if (eventType == XmlPullParser.START_TAG && hasAttr(tableTag, "class", synAntEnt)) {
-                String NymsTemp = "";
-                while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(trTag))) {
+            // Similar:
+            if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", similar_class)) {
+                String similarWords = "";
+                int synIdx = 2;
+                while (synIdx > 0) {
                     eventType = xpp.next();
-
-                    //Detecting italic informal/archaic
-                    if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(italicTag))
-                        while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(italicTag)))
-                            eventType = xpp.next();
-
-                    //Removing More
-                    if (eventType == XmlPullParser.START_TAG && hasAttr(spanTag, "class", synAntMore)) {
-                        eventType = xpp.next(); //at more
-                        eventType = xpp.next(); //at exit spanTag
-                    }
-
-                    //Removing sentences
-                    if (eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", "_iYd xpdxpnd xpdnoxpnd vk_gy") || hasAttr(divTag, "class", sentence))) {
-                        while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)))
-                            eventType = xpp.next();
-                    }
-
-                    if (eventType == XmlPullParser.TEXT)
-                        NymsTemp += xpp.getText();
+                    if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
+                        synIdx--;
                 }
-                System.out.println(NymsTemp); //print out Syn/Ant
-                if (NymsTemp.charAt(0) == 'a' || NymsTemp.charAt(0) == 'A') {
-                    ant = NymsTemp;
-                } else
-                    syn = NymsTemp;
+                synIdx = 1;
+                eventType = xpp.next(); // listitem
+                while (true) {
+                    while (synIdx > 0) {
+                        eventType = xpp.next();
+                        if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)) {
+                            synIdx--;
+                        }
+                        else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag)) {
+                            synIdx++;
+                        }
+                        else if (eventType == XmlPullParser.TEXT)
+                            similarWords += xpp.getText();
+
+                    }
+                    eventType = xpp.next();
+                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "role", "listitem")) {
+                        similarWords += ", ";
+                        synIdx = 1;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                syn = similarWords;
+                synIdx = 1; // checking if opposite exists
+                while (synIdx < 2) {
+                    eventType = xpp.next();
+                    if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)) {
+                        synIdx--;
+                    }
+                    else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag)) {
+                        synIdx++;
+                    }
+                }
+                if (! hasAttr(divTag, "class", opposite_class)) {
+                    bothDone = true;
+                }
             }
-            if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
+
+            // Opposite:
+            if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", opposite_class)) {
+                String oppositeWords = "";
+                int oppIdx = 2;
+                while (oppIdx > 0) {
+                    eventType = xpp.next();
+                    if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
+                        oppIdx--;
+                }
+                oppIdx = 1;
+                eventType = xpp.next(); // listitem
+                while (true) {
+                    while (oppIdx > 0) {
+                        eventType = xpp.next();
+                        if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)) {
+                            oppIdx--;
+                        }
+                        else if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag)) {
+                            oppIdx++;
+                        }
+                        else if (eventType == XmlPullParser.TEXT)
+                            oppositeWords += xpp.getText();
+                    }
+                    eventType = xpp.next();
+                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "role", "listitem")) {
+                        oppositeWords += ", ";
+                        oppIdx = 1;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                ant = oppositeWords;
+                bothDone = true;
+            }
+
+//            if (eventType == XmlPullParser.START_TAG && hasAttr(tableTag, "class", synAntEnt)) {
+//                String NymsTemp = "";
+//                while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(trTag))) {
+//                    eventType = xpp.next();
+//
+//                    //Detecting italic informal/archaic
+//                    if (eventType == XmlPullParser.START_TAG && xpp.getName().equals(italicTag))
+//                        while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(italicTag)))
+//                            eventType = xpp.next();
+//
+//                    //Removing More
+//                    if (eventType == XmlPullParser.START_TAG && hasAttr(spanTag, "class", synAntMore)) {
+//                        eventType = xpp.next(); //at more
+//                        eventType = xpp.next(); //at exit spanTag
+//                    }
+//
+//                    //Removing sentences
+//                    if (eventType == XmlPullParser.START_TAG && (hasAttr(divTag, "class", "_iYd xpdxpnd xpdnoxpnd vk_gy") || hasAttr(divTag, "class", sentence))) {
+//                        while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)))
+//                            eventType = xpp.next();
+//                    }
+//
+//                    if (eventType == XmlPullParser.TEXT)
+//                        NymsTemp += xpp.getText();
+//                }
+//                System.out.println(NymsTemp); //print out Syn/Ant
+//                if (NymsTemp.charAt(0) == 'a' || NymsTemp.charAt(0) == 'A') {
+//                    ant = NymsTemp;
+//                }
+//                else
+//                    syn = NymsTemp;
+//            }
+
+            if ((eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)))
                 i--; //i=1 if sentence/table was there; i=0 nothing is left
+            if (bothDone) {
+                break;
+            }
         }
         if (sent.equals("") && syn.equals("")) { //ONLY_MEAN
             final String fos1 = fos;
@@ -450,7 +544,8 @@ class XMLResponseHandler {
                     mAdapter.add(new DictEntry(DictEntry.ONLY_MEAN, w1, pronunciation1, fos1, mean1));
                 }
             });
-        } else if (sent.equals("") && ant.equals("")) {
+        }
+        else if (sent.equals("") && ant.equals("")) {
             final String fos1 = fos;
             final String mean1 = mean;
             final String syn1 = syn;
@@ -462,7 +557,8 @@ class XMLResponseHandler {
                     mAdapter.add(new DictEntry(DictEntry.MEAN_SYN, w1, pronunciation1, fos1, mean1, syn1));
                 }
             });
-        } else if (sent.equals("")) {
+        }
+        else if (sent.equals("")) {
             final String fos1 = fos;
             final String mean1 = mean;
             final String syn1 = syn;
@@ -475,7 +571,8 @@ class XMLResponseHandler {
                     mAdapter.add(new DictEntry(DictEntry.MEAN_SYN_ANT, w1, pronunciation1, fos1, mean1, syn1, ant1));
                 }
             });
-        } else if (syn.equals("")) {
+        }
+        else if (syn.equals("")) {
             final String fos1 = fos;
             final String mean1 = mean;
             final String sent1 = sent;
