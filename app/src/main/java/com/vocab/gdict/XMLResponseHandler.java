@@ -48,7 +48,9 @@ class XMLResponseHandler {
     private static final String subsen_old = "lr_dct_sf_subsen";
 
     private static final String infoInfoMean = "mQo3nc hsL7ld"; // "lr_dct_lbl_blk lr_dct_lbl_box";
-    private static final String infoMean = "lr_dct_lbl_blk lr_dct_lbl_box"; // "lr_dct_lbl_blk vk_gy";
+    private static final String infoMean = "dfn";
+    private static final String display_inline = "display:inline";
+    private static final String infoMean_old = "lr_dct_lbl_blk lr_dct_lbl_box"; // "lr_dct_lbl_blk vk_gy";
 
     private static final String sentence = "vk_gy";
 
@@ -390,22 +392,39 @@ class XMLResponseHandler {
                     eventType = xpp.next();
                 eventType = xpp.next(); //exit of optional divTag
             }
-            if (eventType == XmlPullParser.START_TAG && (hasAttr(spanTag, "class", infoInfoMean) || hasAttr(spanTag, "class", infoMean))) {
-                while (!(eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))) {
-                    eventType = xpp.next();
-                    if (eventType == XmlPullParser.TEXT)
-                        if (mean.equals(""))
-                            mean = xpp.getText(); //Getting meaning attribute
-                        else
-                            mean = mean + " " + xpp.getText();
+            if (eventType == XmlPullParser.START_TAG
+                    && ((hasAttr(divTag, "data-dobid", infoMean)
+                    && hasAttr(divTag, "style", display_inline))
+                    || hasAttr(spanTag, "class", infoInfoMean))) {
+                if(xpp.getName().equals(spanTag)) {
+                    while (!(eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag))) {
+                        eventType = xpp.next();
+                        if (eventType == XmlPullParser.TEXT)
+                            if (mean.equals(""))
+                                mean = xpp.getText(); //Getting meaning attribute
+                            else
+                                mean += xpp.getText();
+                    }
                 }
-                eventType = xpp.next(); //Getting out div that sourrounded the span tag
-            }
-            if (eventType == XmlPullParser.TEXT) {
                 if (!mean.equals(""))
                     mean = "(" + mean + ") ";
-                mean = mean + xpp.getText(); //getting meaning
+                int meanIdx = 1;
+                while (meanIdx != 0) {
+                    eventType = xpp.next();
+                    if ((eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)))
+                        meanIdx--;
+                    else if ((eventType == XmlPullParser.START_TAG && xpp.getName().equals(divTag)))
+                        meanIdx++;
+                    else if (eventType == XmlPullParser.TEXT)
+                        mean += xpp.getText();
+                }
+//                eventType = xpp.next(); //Getting out div that sourrounded the span tag
             }
+//            if (eventType == XmlPullParser.TEXT) {
+//                if (!mean.equals(""))
+//                    mean = "(" + mean + ") ";
+//                mean = mean + xpp.getText(); //getting meaning
+//            }
         } // meaning received exiting at divTag
         while (i != 0) {
             eventType = xpp.next(); //i=1 first time
@@ -418,7 +437,7 @@ class XMLResponseHandler {
                     if (eventType == XmlPullParser.TEXT)
                         SentenceTemp += xpp.getText();
                 } //exits at the divTag end of sentence
-                System.out.println(SentenceTemp);
+                // System.out.println(SentenceTemp);
                 sent = SentenceTemp;
             }
 
@@ -457,7 +476,7 @@ class XMLResponseHandler {
                 }
                 syn = similarWords;
                 synIdx = 1; // checking if opposite exists
-                while (synIdx < 2) {
+                while (synIdx < 2 && synIdx >= 0) {
                     eventType = xpp.next();
                     if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)) {
                         synIdx--;
@@ -597,7 +616,8 @@ class XMLResponseHandler {
                     mAdapter.add(new DictEntry(DictEntry.MEAN_SENT, w1, pronunciation1, fos1, mean1, sent1));
                 }
             });
-        } else if (ant.equals("")) {
+        }
+        else if (ant.equals("")) {
             final String fos1 = fos;
             final String mean1 = mean;
             final String sent1 = sent;
@@ -610,7 +630,8 @@ class XMLResponseHandler {
                     mAdapter.add(new DictEntry(DictEntry.MEAN_SENT_SYN, w1, pronunciation1, fos1, mean1, sent1, syn1));
                 }
             });
-        } else {
+        }
+        else {
             final String fos1 = fos;
             final String mean1 = mean;
             final String sent1 = sent;
