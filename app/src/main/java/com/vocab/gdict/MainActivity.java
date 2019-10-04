@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.text.Editable;
@@ -61,6 +62,7 @@ public class MainActivity extends ListActivity implements OnInitListener {
     private DatabaseOpenHelper mDbHelper;
     private SimpleCursorAdapter mCursonAdapter;
     private SharedPreferences prefs;
+    final private Handler handler = new Handler();
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -195,12 +197,20 @@ public class MainActivity extends ListActivity implements OnInitListener {
                 // http://stackoverflow.com/questions/2376471/how-do-i-get-the-web-page-contents-from-a-webview
                 // pageFinishCtr++;
                 if (!isRedirected) {
-                    webV.loadUrl("javascript:window.HtmlViewer.showHTML" +
-                            "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
-                    isRedirected = false;
-                } else {
-                    isRedirected = false;
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Do something after 5s = 5000ms
+                            webV.loadUrl("javascript:window.HtmlViewer.showHTML" +
+                                    "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
+                        }
+                    }, 300);
+
+                    isRedirected = true;
                 }
+//                else {
+//                    isRedirected = false;
+//                }
 
                 loadingBar.setIndeterminate(false);
                 loadingBar.setVisibility(View.INVISIBLE);
