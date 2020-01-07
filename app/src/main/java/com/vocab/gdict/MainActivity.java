@@ -1,6 +1,7 @@
 package com.vocab.gdict;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -337,6 +338,18 @@ public class MainActivity extends ListActivity implements OnInitListener {
         private Context ctx;
         private DictEntriesAdapter cAdapter;
         // private boolean onlyOnce=true;
+
+        // https://stackoverflow.com/questions/14376807/how-to-read-write-string-from-a-file-in-android
+//        private void writeToFile(String data,Context context) {
+//            try {
+//                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("dict.html", Context.MODE_PRIVATE));
+//                outputStreamWriter.write(data);
+//                outputStreamWriter.close();
+//            }
+//            catch (IOException e) {
+//                // ("Exception", "File write failed: " + e.toString());
+//            }
+//        }
 
         MyJavaScriptInterface(Context ctx, DictEntriesAdapter mAdapter) {
             this.ctx = ctx;

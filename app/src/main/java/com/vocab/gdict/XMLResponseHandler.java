@@ -445,13 +445,13 @@ class XMLResponseHandler {
             if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", similar_class)) {
                 String similarWords = "";
                 int synIdx = 2;
-                while (synIdx > 0) {
+                while (true) {
                     eventType = xpp.next();
-                    if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
-                        synIdx--;
+                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "role", "listitem")) {
+                        break;
+                    }
                 }
                 synIdx = 1;
-                eventType = xpp.next(); // listitem
                 while (true) {
                     while (synIdx > 0) {
                         eventType = xpp.next();
@@ -476,7 +476,7 @@ class XMLResponseHandler {
                 }
                 syn = similarWords;
                 synIdx = 1; // checking if opposite exists
-                while (synIdx < 2 && synIdx >= 0) {
+                while (synIdx < 3 && synIdx >= 0) {
                     eventType = xpp.next();
                     if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag)) {
                         synIdx--;
@@ -494,13 +494,15 @@ class XMLResponseHandler {
             if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "class", opposite_class)) {
                 String oppositeWords = "";
                 int oppIdx = 2;
-                while (oppIdx > 0) {
+
+                while (true) {
                     eventType = xpp.next();
-                    if (eventType == XmlPullParser.END_TAG && xpp.getName().equals(divTag))
-                        oppIdx--;
+                    if (eventType == XmlPullParser.START_TAG && hasAttr(divTag, "role", "listitem")) {
+                        break;
+                    }
                 }
+
                 oppIdx = 1;
-                eventType = xpp.next(); // listitem
                 while (true) {
                     while (oppIdx > 0) {
                         eventType = xpp.next();
